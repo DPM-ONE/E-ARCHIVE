@@ -1,0 +1,23 @@
+# ============================================
+
+# PROTECTION DOSSIER UPLOADS
+
+# ============================================
+
+# Empêcher l'exécution de PHP dans uploads
+
+<FilesMatch "\.php$">
+Order Allow,Deny
+Deny from all
+</FilesMatch>
+
+# Autoriser uniquement certains types de fichiers
+
+<FilesMatch "\.(jpg|jpeg|png|gif|pdf|doc|docx|xls|xlsx)$">
+Order Allow,Deny
+Allow from all
+</FilesMatch>
+
+# Empêcher l'affichage du contenu
+
+Options -Indexes

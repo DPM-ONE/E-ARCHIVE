@@ -1,0 +1,55 @@
+ 
+# ============================================
+# SÉCURITÉ APACHE - DPM ARCHIVE
+# ============================================
+
+# Empêcher l'affichage du contenu des dossiers
+Options -Indexes
+
+# Protection des fichiers sensibles
+<FilesMatch "^(\.htaccess|\.env|config\.php|database\.php|session\.php)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protection des fichiers de configuration
+<Files "database.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "session.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Protection des logs
+<FilesMatch "\.(log|txt)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Activer la réécriture d'URL (si nécessaire)
+RewriteEngine On
+
+# Redirection HTTPS (à activer en production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Protection contre les injections
+<IfModule mod_rewrite.c>
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# Désactiver la signature du serveur
+ServerSignature Off
+
+# Protection XSS
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    Header always append X-Frame-Options SAMEORIGIN
+    Header set X-Content-Type-Options nosniff
+</IfModule>
