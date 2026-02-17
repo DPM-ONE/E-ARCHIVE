@@ -1,0 +1,130 @@
+ /* ===== REDIRECT LOADER ===== */
+        .redirect-loader {
+            position: fixed;
+            inset: 0;
+            background: #00A859;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .redirect-loader.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .redirect-loader__logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 16px;
+            object-fit: contain;
+            animation: rl-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+
+        .redirect-loader__spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: rl-spin 0.8s linear infinite;
+        }
+
+        .redirect-loader__text {
+            color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            opacity: 0;
+            animation: rl-fade 0.4s ease 0.2s forwards;
+        }
+
+        .redirect-loader__sub {
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.98rem;
+            opacity: 0;
+            animation: rl-fade 0.4s ease 0.35s forwards;
+        }
+
+        .redirect-loader__dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .redirect-loader__dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            animation: rl-dot 1.2s ease-in-out infinite;
+        }
+
+        .redirect-loader__dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .redirect-loader__dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes rl-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rl-pop {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes rl-fade {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rl-dot {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+
+            40% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* Sweep sur la page au départ */
+        .redirect-loader__sweep {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    rgba(255, 255, 255, 0) 60%);
+        }

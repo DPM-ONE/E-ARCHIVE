@@ -1,9 +1,8 @@
 <?php
 /**
- * api/pharmacies.php — CRUD pharmacies_dpm
+ * api/grossistes.php — CRUD grossistes_dpm
  */
 
-/* ── Capturer tout output parasite avant les headers ── */
 ob_start();
 error_reporting(0);
 ini_set('display_errors', '0');
@@ -11,20 +10,16 @@ ini_set('display_errors', '0');
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/database.php';
 
-/* Vider buffer et envoyer le type JSON */
 ob_end_clean();
 header('Content-Type: application/json; charset=utf-8');
 
-/* ── Sortie JSON garantie ──────────────────────────────── */
 function jsonOut(array $payload, int $code = 200): void {
-    // Vider tout buffer résiduel
     while (ob_get_level()) ob_end_clean();
     http_response_code($code);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR);
     exit;
 }
 
-/* Filet de sécurité : toute erreur fatale non catchée → JSON */
 register_shutdown_function(function () {
     $err = error_get_last();
     if ($err && in_array($err['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
@@ -35,26 +30,19 @@ register_shutdown_function(function () {
     }
 });
 
-/* ── Auth ──────────────────────────────────────────────── */
-/* session.php appelle déjà session_start() si besoin */
 if (empty($_SESSION['user_id'])) {
     jsonOut(['success' => false, 'message' => 'Session expirée. Actualisez la page.'], 401);
 }
 
-/* session.php stocke le rôle dans $_SESSION['user']['role'] */
 function canWrite(): bool {
     $role = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? '';
     return in_array($role, ['super_admin', 'admin'], true);
 }
 
-/* ── Body JSON ─────────────────────────────────────────── */
 $raw  = file_get_contents('php://input');
 $data = ($raw !== false && $raw !== '') ? json_decode($raw, true) : [];
 if (!is_array($data)) $data = [];
 
-/* ══════════════════════════════════════════════════════════
-   Routing
-══════════════════════════════════════════════════════════ */
 try {
     $pdo = getPDO();
 
@@ -64,26 +52,23 @@ try {
         if (!$id) jsonOut(['success' => false, 'message' => 'ID invalide']);
 
         $stmt = $pdo->prepare("
-            SELECT p.*,
+            SELECT g.*,
                    d.libelle  AS dept_libelle,
-                   g.groupe   AS groupe_libelle,
                    a.libelle  AS arr_libelle,
                    dt.libelle AS dist_libelle
-            FROM pharmacies_dpm p
-            LEFT JOIN departements_dpm   d  ON d.id  = p.departement
-            LEFT JOIN groupe_dpm         g  ON g.id  = p.groupe_id
-            LEFT JOIN arrondissement_dpm a  ON a.id  = p.arrondissement_id
-            LEFT JOIN district_dpm       dt ON dt.id = p.district_id
-            WHERE p.id = ?
+            FROM grossistes_dpm g
+            LEFT JOIN departements_dpm   d  ON d.id  = g.departement
+            LEFT JOIN arrondissement_dpm a  ON a.id  = g.arrondissement_id
+            LEFT JOIN district_dpm       dt ON dt.id = g.district_id
+            WHERE g.id = ?
         ");
         $stmt->execute([$id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $row
             ? jsonOut(['success' => true, 'data' => $row])
-            : jsonOut(['success' => false, 'message' => 'Pharmacie introuvable'], 404);
+            : jsonOut(['success' => false, 'message' => 'Grossiste introuvable'], 404);
     }
 
-    /* ── POST uniquement ── */
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         jsonOut(['success' => false, 'message' => 'Méthode non autorisée'], 405);
     }
@@ -104,14 +89,14 @@ try {
             jsonOut(['success' => false, 'message' => 'ID invalide (reçu : ' . json_encode($data['id'] ?? null) . ')']);
         }
 
-        $chk = $pdo->prepare("SELECT id FROM pharmacies_dpm WHERE id = ?");
+        $chk = $pdo->prepare("SELECT id FROM grossistes_dpm WHERE id = ?");
         $chk->execute([$id]);
         if (!$chk->fetch()) {
-            jsonOut(['success' => false, 'message' => "Pharmacie id=$id introuvable"], 404);
+            jsonOut(['success' => false, 'message' => "Grossiste id=$id introuvable"], 404);
         }
 
-        $pdo->prepare("DELETE FROM pharmacies_dpm WHERE id = ?")->execute([$id]);
-        jsonOut(['success' => true, 'message' => 'Pharmacie supprimée avec succès']);
+        $pdo->prepare("DELETE FROM grossistes_dpm WHERE id = ?")->execute([$id]);
+        jsonOut(['success' => true, 'message' => 'Grossiste supprimé avec succès']);
     }
 
     /* ════════════
@@ -129,13 +114,11 @@ try {
         }
 
         foreach ([
-            'nom_pharmacie' => 'Nom de la pharmacie',
-            'prenom'        => 'Prénom',
-            'nom'           => 'Nom',
-            'telephone_1'   => 'Téléphone 1',
+            'nom_grossiste' => 'Nom du grossiste',
+            'responsable'   => 'Responsable',
+            'telephone'     => 'Téléphone',
             'adresse'       => 'Adresse',
             'quartier'      => 'Quartier',
-            'horaire'       => 'Horaire',
         ] as $field => $label) {
             if (empty(trim((string)($data[$field] ?? '')))) {
                 jsonOut(['success' => false, 'message' => "Champ obligatoire manquant : « $label »"]);
@@ -145,84 +128,63 @@ try {
         $deptId = (int)($data['departement'] ?? 0);
         if (!$deptId) jsonOut(['success' => false, 'message' => 'Département obligatoire']);
 
-        $horaire = (string)($data['horaire'] ?? '');
-        if (!in_array($horaire, ['Jour', 'Nuit', '24h/24'], true)) {
-            jsonOut(['success' => false, 'message' => "Horaire invalide : \"$horaire\""]);
-        }
-
         $arrDepts = array_map('intval',
             $pdo->query("SELECT DISTINCT departement_id FROM arrondissement_dpm")->fetchAll(PDO::FETCH_COLUMN)
         );
-        $hasArr  = in_array($deptId, $arrDepts, true);
-        $isBZV   = ($deptId === 1);
+        $hasArr = in_array($deptId, $arrDepts, true);
 
-        $arrId   = ($hasArr  && !empty($data['arrondissement_id'])) ? (int)$data['arrondissement_id'] : null;
-        $distId  = (!$hasArr && !empty($data['district_id']))        ? (int)$data['district_id']       : null;
-        $zoneBzv = ($isBZV   && !empty($data['zone_bzv']))           ? (string)$data['zone_bzv']       : null;
+        $arrId  = ($hasArr  && !empty($data['arrondissement_id'])) ? (int)$data['arrondissement_id'] : null;
+        $distId = (!$hasArr && !empty($data['district_id']))        ? (int)$data['district_id']       : null;
 
         $zoneOk      = ['', 'Salle I', 'Salle II', 'Salle III', 'Salle IV', 'Salle V'];
         $zoneArchive = in_array($data['zone_archive'] ?? '', $zoneOk)
                        ? ($data['zone_archive'] ?: null) : null;
 
         $stmt = $pdo->prepare("
-            UPDATE pharmacies_dpm SET
-                nom_pharmacie     = :nom_pharmacie,
-                prenom            = :prenom,
-                nom               = :nom,
+            UPDATE grossistes_dpm SET
+                nom_grossiste     = :nom_grossiste,
+                responsable       = :responsable,
+                telephone         = :telephone,
                 email             = :email,
-                telephone_1       = :telephone_1,
-                telephone_2       = :telephone_2,
                 adresse           = :adresse,
                 quartier          = :quartier,
                 departement       = :departement,
                 arrondissement_id = :arr_id,
                 district_id       = :dist_id,
-                zone_bzv          = :zone_bzv,
-                horaire           = :horaire,
-                box_dossier       = :box_dossier,
+                box_rangement     = :box_rangement,
                 zone_archive      = :zone_archive,
-                groupe_id         = :groupe_id,
-                is_groupe         = :is_groupe,
                 is_actif          = :is_actif
             WHERE id = :id
         ");
         $stmt->execute([
-            ':nom_pharmacie' => trim((string)$data['nom_pharmacie']),
-            ':prenom'        => trim((string)$data['prenom']),
-            ':nom'           => trim((string)$data['nom']),
-            ':email'         => trim((string)($data['email']      ?? '')) ?: null,
-            ':telephone_1'   => trim((string)$data['telephone_1']),
-            ':telephone_2'   => trim((string)($data['telephone_2'] ?? '')) ?: null,
+            ':nom_grossiste' => trim((string)$data['nom_grossiste']),
+            ':responsable'   => trim((string)$data['responsable']),
+            ':telephone'     => trim((string)$data['telephone']),
+            ':email'         => trim((string)($data['email'] ?? '')) ?: null,
             ':adresse'       => trim((string)$data['adresse']),
             ':quartier'      => trim((string)$data['quartier']),
             ':departement'   => $deptId,
             ':arr_id'        => $arrId,
             ':dist_id'       => $distId,
-            ':zone_bzv'      => $zoneBzv,
-            ':horaire'       => $horaire,
-            ':box_dossier'   => trim((string)($data['box_dossier']  ?? '')) ?: null,
+            ':box_rangement' => trim((string)($data['box_rangement'] ?? '')) ?: null,
             ':zone_archive'  => $zoneArchive,
-            ':groupe_id'     => !empty($data['groupe_id']) ? (int)$data['groupe_id'] : null,
-            ':is_groupe'     => (int)(bool)($data['is_groupe'] ?? 0),
-            ':is_actif'      => (int)(bool)($data['is_actif']  ?? 1),
+            ':is_actif'      => (int)(bool)($data['is_actif'] ?? 1),
             ':id'            => $id,
         ]);
 
         $sel = $pdo->prepare("
-            SELECT p.*,
+            SELECT g.*,
                    d.libelle  AS dept_libelle,
-                   g.groupe   AS groupe_libelle,
                    a.libelle  AS arr_libelle,
                    dt.libelle AS dist_libelle
-            FROM pharmacies_dpm p
-            LEFT JOIN departements_dpm   d  ON d.id  = p.departement
-            LEFT JOIN groupe_dpm         g  ON g.id  = p.groupe_id
-            LEFT JOIN arrondissement_dpm a  ON a.id  = p.arrondissement_id
-            LEFT JOIN district_dpm       dt ON dt.id = p.district_id
-            WHERE p.id = ?
+            FROM grossistes_dpm g
+            LEFT JOIN departements_dpm   d  ON d.id  = g.departement
+            LEFT JOIN arrondissement_dpm a  ON a.id  = g.arrondissement_id
+            LEFT JOIN district_dpm       dt ON dt.id = g.district_id
+            WHERE g.id = ?
         ");
         $sel->execute([$id]);
-        jsonOut(['success' => true, 'message' => 'Pharmacie modifiée', 'data' => $sel->fetch(PDO::FETCH_ASSOC)]);
+        jsonOut(['success' => true, 'message' => 'Grossiste modifié', 'data' => $sel->fetch(PDO::FETCH_ASSOC)]);
     }
 
     jsonOut(['success' => false, 'message' => "Action inconnue : \"$action\""], 400);

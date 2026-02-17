@@ -1,0 +1,636 @@
+/* Google Font : Outfit */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/**
+ * assets/css/sidebar.css
+ * Sidebar navigation - DPM e-Archive
+ */
+
+/* ============================================================
+   VARIABLES SIDEBAR
+============================================================ */
+:root {
+    --sb-width:          260px;
+    --sb-width-collapsed: 68px;
+    --sb-bg:             #0D1117;
+    --sb-border:         rgba(255, 255, 255, 0.06);
+    --sb-accent:         #00A859;
+    --sb-accent-dim:     rgba(0, 168, 89, 0.12);
+    --sb-accent-glow:    rgba(0, 168, 89, 0.25);
+    --sb-text:           rgba(255, 255, 255, 0.55);
+    --sb-text-hover:     rgba(255, 255, 255, 0.9);
+    --sb-text-active:    #ffffff;
+    --sb-transition:     0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    --sb-radius:         10px;
+
+    /* Layout */
+    --sb-main-margin:    var(--sb-width);
+}
+
+/* ============================================================
+   SIDEBAR BASE
+============================================================ */
+.sb {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sb-width);
+    height: 100vh;
+    background: var(--sb-bg);
+    display: flex;
+    flex-direction: column;
+    z-index: 200;
+    transition: width var(--sb-transition);
+
+
+    /* Subtle grain texture */
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(0,168,89,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 100%, rgba(0,168,89,0.04) 0%, transparent 50%);
+}
+
+/* Ligne décorative droite */
+.sb::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--sb-border) 20%,
+        var(--sb-border) 80%,
+        transparent 100%
+    );
+}
+
+/* ============================================================
+   COLLAPSED STATE
+============================================================ */
+.sb.collapsed {
+    width: var(--sb-width-collapsed);
+}
+
+/* Main content adapte */
+.sb-main {
+    margin-left: var(--sb-width);
+    transition: margin-left var(--sb-transition);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.sb.collapsed ~ .sb-main {
+    margin-left: var(--sb-width-collapsed);
+}
+
+/* ============================================================
+   TOGGLE BUTTON
+============================================================ */
+.sb-toggle {
+    position: absolute;
+    top: 16px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0;
+    transition: background var(--sb-transition), border-color var(--sb-transition), transform 0.15s ease;
+}
+
+.sb-toggle:hover {
+    background: var(--sb-accent);
+    border-color: var(--sb-accent);
+}
+
+.sb-toggle:active {
+    transform: scale(0.92);
+}
+
+/* Icônes SVG flèches */
+.sb-toggle__icon {
+    width: 16px;
+    height: 16px;
+    color: rgba(255,255,255,0.75);
+    transition: color 0.15s ease, opacity var(--sb-transition), transform var(--sb-transition);
+    position: absolute;
+}
+
+.sb-toggle:hover .sb-toggle__icon {
+    color: #ffffff;
+}
+
+/* État OUVERT : affiche flèche gauche, cache flèche droite */
+.sb:not(.collapsed) .sb-toggle__icon--hide {
+    opacity: 1;
+    transform: translateX(0);
+}
+.sb:not(.collapsed) .sb-toggle__icon--show {
+    opacity: 0;
+    transform: translateX(4px);
+    pointer-events: none;
+}
+
+/* État RÉDUIT : affiche flèche droite, cache flèche gauche */
+.sb.collapsed .sb-toggle__icon--hide {
+    opacity: 0;
+    transform: translateX(-4px);
+    pointer-events: none;
+}
+.sb.collapsed .sb-toggle__icon--show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ============================================================
+   LOGO
+============================================================ */
+.sb-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 52px 18px 16px;
+    border-bottom: 1px solid var(--sb-border);
+    flex-shrink: 0;
+    min-width: var(--sb-width);
+    text-decoration: none;
+}
+
+.sb-logo__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: rgba(0, 168, 89, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,168,89,0.2);
+
+    transition: transform 0.2s ease;
+}
+
+.sb-logo__icon:hover {
+    transform: scale(1.05);
+}
+
+.sb-logo__icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.sb-logo__text {
+    display: flex;
+    flex-direction: column;
+
+    transition: opacity var(--sb-transition), width var(--sb-transition);
+    white-space: nowrap;
+}
+
+.sb-logo__name {
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.sb-logo__sub {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--sb-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* Masquer texte logo quand collapsed */
+.sb.collapsed .sb-logo__text {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+}
+
+.sb.collapsed .sb-logo {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-bottom: none;
+}
+.sb.collapsed .sb-logo {
+    padding: 20px 10px 18px;
+    justify-content: center;
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+.sb-nav {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section figée (NAVIGATION et ADMINISTRATION) */
+.sb-nav__section--fixed {
+    flex-shrink: 0;
+    padding: 0 10px;
+}
+
+/* Section scrollable (MODULES) */
+.sb-nav__section--scroll {
+    flex: 1;
+    padding: 0 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.12) transparent;
+    min-height: 0;
+}
+
+.sb-nav__section--scroll::-webkit-scrollbar {
+    width: 3px;
+}
+.sb-nav__section--scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sb-nav__section--scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+}
+
+.sb-nav__section {
+    margin-bottom: 4px;
+}
+
+.sb-nav__section--fixed .sb-nav__label {
+    padding-top: 12px;
+}
+
+.sb-nav__label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.2);
+    padding: 14px 10px 6px;
+    white-space: nowrap;
+
+    transition: opacity var(--sb-transition);
+}
+
+.sb.collapsed .sb-nav__label {
+    opacity: 0;
+}
+
+/* NAV ITEM */
+.sb-nav__item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 10px;
+    border-radius: var(--sb-radius);
+    color: var(--sb-text);
+    text-decoration: none;
+    font-size: 0.8375rem;
+    font-weight: 500;
+    transition:
+        background var(--sb-transition),
+        color var(--sb-transition),
+        padding var(--sb-transition);
+    position: relative;
+    white-space: nowrap;
+    margin-bottom: 1px;
+}
+
+.sb-nav__item:hover {
+    background: rgba(255,255,255,0.05);
+    color: var(--sb-text-hover);
+}
+
+/* État actif */
+.sb-nav__item--active {
+    background: var(--sb-accent-dim);
+    color: var(--sb-accent) !important;
+}
+
+.sb-nav__item--active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background: var(--sb-accent);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 8px var(--sb-accent-glow);
+}
+
+.sb-nav__item--active .sb-nav__icon {
+    color: var(--sb-accent);
+}
+
+/* Icône */
+.sb-nav__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+}
+
+.sb-nav__icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.sb-nav__item:hover .sb-nav__icon {
+    transform: scale(1.1);
+}
+
+/* Texte nav */
+.sb-nav__text {
+
+    transition: opacity var(--sb-transition), width var(--sb-transition);
+    white-space: nowrap;
+}
+
+.sb.collapsed .sb-nav__text {
+    opacity: 0;
+    width: 0;
+}
+
+/* ============================================================
+   TOOLTIP (mode collapsed)
+============================================================ */
+.sb.collapsed .sb-nav__item[data-tooltip]:hover::after,
+.sb.collapsed .sb-user[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(var(--sb-width-collapsed) - 4px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1E2D3D;
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 999;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    animation: tooltip-in 0.15s ease forwards;
+}
+
+.sb.collapsed .sb-nav__item[data-tooltip]:hover::before,
+.sb.collapsed .sb-user[data-tooltip]:hover::before {
+    content: none;
+}
+
+@keyframes tooltip-in {
+    from { opacity: 0; transform: translateY(-50%) translateX(-4px); }
+    to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+/* ============================================================
+   FOOTER USER CARD
+============================================================ */
+.sb-footer {
+    padding: 12px 10px;
+    border-top: 1px solid var(--sb-border);
+    flex-shrink: 0;
+}
+
+.sb-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--sb-radius);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--sb-border);
+    position: relative;
+    cursor: default;
+    transition: background var(--sb-transition);
+    min-width: max-content;
+}
+
+.sb-user:hover {
+    background: rgba(255,255,255,0.07);
+}
+
+.sb-user__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--sb-accent), #047857);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+}
+
+.sb-user__info {
+    flex: 1;
+    min-width: 0;
+
+    transition: opacity var(--sb-transition), width var(--sb-transition);
+    white-space: nowrap;
+}
+
+.sb-user__name {
+    display: block;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+}
+
+.sb-user__role {
+    display: block;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.68rem;
+}
+
+.sb-user__logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    color: rgba(255,255,255,0.3);
+    transition: all 0.15s;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.sb-user__logout svg {
+    width: 15px;
+    height: 15px;
+}
+
+.sb-user__logout:hover {
+    background: rgba(239,68,68,0.15);
+    color: #EF4444;
+}
+
+/* Masquer info + logout quand collapsed */
+.sb.collapsed .sb-user__info,
+.sb.collapsed .sb-user__logout {
+    opacity: 0;
+    width: 0;
+    pointer-events: none;
+
+}
+
+.sb.collapsed .sb-user {
+    padding: 8px;
+    justify-content: center;
+    background: transparent;
+    border-color: transparent;
+}
+
+/* ============================================================
+   OVERLAY MOBILE
+============================================================ */
+.sb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 900px) {
+    .sb {
+        transform: translateX(-100%);
+        width: var(--sb-width) !important;
+        transition: transform var(--sb-transition);
+    }
+
+    .sb.mobile-open {
+        transform: translateX(0);
+    }
+
+    .sb-overlay {
+        display: block;
+    }
+
+    .sb-overlay.visible {
+        opacity: 1;
+    }
+
+    .sb-main {
+        margin-left: 0 !important;
+    }
+
+    .sb-toggle {
+        display: none;
+    }
+}
+
+/* ============================================================
+   GLOBAL FONT OVERRIDE - Outfit
+============================================================ */
+.sb,
+.sb *,
+.sb-topbar,
+.sb-topbar * {
+    font-family: 'Outfit', system-ui, sans-serif;
+}
+
+.sb-logo__name {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 1.05rem;
+}
+
+.sb-logo__sub {
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    font-size: 0.6rem;
+}
+
+.sb-nav__item {
+    font-size: 0.84rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.sb-nav__item--active {
+    font-weight: 600;
+}
+
+.sb-nav__label {
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.sb-user__name {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.sb-user__role {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.sb-topbar__title {
+    font-family: 'Outfit', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 0.975rem;
+    letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   SÉPARATEURS SECTIONS
+============================================================ */
+.sb-nav__section--scroll {
+    border-top: 1px solid var(--sb-border);
+    border-bottom: 1px solid var(--sb-border);
+}
+
+.sb-nav__section--fixed:last-child {
+    padding-bottom: 8px;
+}
+
+/* Logo transition fluide */
+.sb-logo {
+    transition: opacity var(--sb-transition), height var(--sb-transition),
+                padding var(--sb-transition), border-color var(--sb-transition);
+}

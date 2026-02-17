@@ -1,7 +1,5 @@
 <?php
 session_start();
-
-// Si déjà connecté, rediriger vers dashboard
 if (isset($_SESSION['user_id'])) {
     header('Location: dashboard.php');
     exit;
@@ -14,61 +12,75 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - DPM Archive</title>
-    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="icon" type="image/x-icon" href="assets/img/icons/favicon.ico">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="assets/css/variables.css">
     <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="stylesheet" href="assets/css/animations.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/forms.css">
     <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/redirect.css">
 </head>
 
 <body>
-    <!-- Preloader -->
+
+    <!-- Preloader initial -->
     <div class="preloader" id="preloader">
         <div class="preloader__spinner"></div>
         <p class="preloader__text">Chargement...</p>
     </div>
 
+    <!-- Loader redirection (connexion réussie) -->
+    <div class="redirect-loader" id="redirectLoader">
+        <div class="redirect-loader__sweep"></div>
+        <img src="assets/img/logo-poster-192x192.png" class="redirect-loader__logo" alt="DPM Archive">
+        <div class="redirect-loader__spinner"></div>
+        <p class="redirect-loader__text">Connexion réussie</p>
+        <p class="redirect-loader__sub">Redirection vers le tableau de bord...</p>
+        <div class="redirect-loader__dots">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+
     <div class="auth-page">
         <div class="auth-container">
             <div class="auth-card">
+
                 <!-- Header -->
                 <div class="auth-header">
-                    <!-- Logo PNG -->
-                    <img src="assets\img\logo-poster-192x192.png" class="auth-logo" alt="Logo de l'application e-Archive">
+                    <img src="assets/img/logo-poster-192x192.png" class="auth-logo" alt="Logo DPM Archive">
                     <h1 class="auth-title">Connexion</h1>
                     <p class="auth-subtitle">Accédez à votre espace DPM Archive</p>
                 </div>
 
-                <!-- Alert si erreur -->
+                <!-- Alertes -->
                 <div id="alertContainer"></div>
 
-                <!-- Form -->
+                <!-- Formulaire -->
                 <form class="auth-form" id="loginForm">
-                    <!-- Email/Username -->
+
+                    <!-- Identifiant -->
                     <div class="form-group">
-                        <label for="username" class="form-label form-label--required">Identifiant</label>
+                        <label for="username" class="form-label form-label--required">
+                            Identifiant
+                        </label>
                         <div class="input-container">
-                            <!-- Icon User SVG -->
                             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
                             </svg>
                             <input type="text" id="username" name="username" class="form-input"
-                                placeholder="Votre nom d'utilisateur" required autocomplete="username">
+                                placeholder="Nom d'utilisateur ou email" required autocomplete="username">
                         </div>
                     </div>
 
-                    <!-- Password -->
+                    <!-- Mot de passe -->
                     <div class="form-group">
-                        <label for="password" class="form-label form-label--required">Mot de passe</label>
+                        <label for="password" class="form-label form-label--required">
+                            Mot de passe
+                        </label>
                         <div class="input-container">
-                            <!-- Icon Lock SVG -->
                             <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -76,20 +88,13 @@ if (isset($_SESSION['user_id'])) {
                             </svg>
                             <input type="password" id="password" name="password" class="form-input"
                                 placeholder="Votre mot de passe" required autocomplete="current-password">
-                            <!-- Icon Eye (toggle) SVG -->
-                            <svg class="input-icon input-icon--right password-toggle" id="togglePassword"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path id="eyeOpen" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                <circle cx="12" cy="12" r="3" />
-                                <path id="eyeClosed"
-                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
-                                    style="display: none;" />
-                                <line x1="1" y1="1" x2="23" y2="23" id="eyeSlash" style="display: none;" />
-                            </svg>
+                            <span class="input-icon input-icon--right password-toggle" data-target="password"
+                                title="Afficher le mot de passe">
+                            </span>
                         </div>
                     </div>
 
-                    <!-- Remember me -->
+                    <!-- Se souvenir de moi -->
                     <div class="form-group">
                         <label class="form-checkbox">
                             <input type="checkbox" name="remember" id="remember">
@@ -97,8 +102,8 @@ if (isset($_SESSION['user_id'])) {
                         </label>
                     </div>
 
-                    <!-- Submit -->
-                    <button type="submit" class="btn btn-primary btn-full">
+                    <!-- Bouton -->
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -107,6 +112,7 @@ if (isset($_SESSION['user_id'])) {
                         </svg>
                         Se connecter
                     </button>
+
                 </form>
 
                 <!-- Footer -->
@@ -116,13 +122,55 @@ if (isset($_SESSION['user_id'])) {
                         <a href="register.php" class="auth-footer__link">Créer un compte</a>
                     </p>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <!-- JavaScript -->
     <script src="assets/js/preloader.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script>
+        // Override handleLogin pour ajouter le redirect loader
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtn = submitBtn.innerHTML;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="preloader__spinner" style="width:20px;height:20px;border-width:2px;"></div>';
+
+            fetch('api/auth.php', {
+                method: 'POST',
+                body: new FormData(this)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showRedirectLoader();
+                    } else {
+                        showAlert('error', data.message || 'Identifiants incorrects');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtn;
+                    }
+                })
+                .catch(() => {
+                    showAlert('error', 'Erreur de connexion au serveur');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtn;
+                });
+        }, true); // capture phase pour override auth.js
+
+        function showRedirectLoader() {
+            const loader = document.getElementById('redirectLoader');
+            loader.classList.add('visible');
+            setTimeout(() => {
+                window.location.href = 'dashboard.php';
+            }, 1800);
+        }
+    </script>
+
 </body>
 
 </html>
