@@ -119,19 +119,6 @@ $_sb_prefix = ($_sb_dir === 'pages') ? '../' : '';
                 <span class="sb-nav__text">Pharmacies</span>
             </a>
 
-            <a href="<?= $_sb_prefix ?>pages/grossistes.php" class="sb-nav__item <?= sb_active('grossistes.php') ?>"
-                data-tooltip="Grossistes">
-                <span class="sb-nav__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <rect x="3" y="12" width="7" height="7" rx="1" />
-                        <rect x="14" y="12" width="7" height="7" rx="1" />
-                        <rect x="8" y="5" width="8" height="6" rx="1" />
-                        <path d="M6 15h2M17 15h2" />
-                    </svg>
-                </span>
-                <span class="sb-nav__text">Grossistes</span>
-            </a>
-
             <a href="<?= $_sb_prefix ?>pages/gardes.php" class="sb-nav__item <?= sb_active('gardes.php') ?>"
                 data-tooltip="Gardes">
                 <span class="sb-nav__icon">
@@ -143,15 +130,17 @@ $_sb_prefix = ($_sb_dir === 'pages') ? '../' : '';
                 <span class="sb-nav__text">Gardes</span>
             </a>
 
-            <a href="<?= $_sb_prefix ?>pages/agences.php" class="sb-nav__item <?= sb_active('agences.php') ?>"
-                data-tooltip="Agences">
+            <a href="<?= $_sb_prefix ?>pages/grossistes.php" class="sb-nav__item <?= sb_active('grossistes.php') ?>"
+                data-tooltip="Grossistes">
                 <span class="sb-nav__icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <rect x="2" y="7" width="20" height="14" rx="2" />
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                        <rect x="3" y="12" width="7" height="7" rx="1" />
+                        <rect x="14" y="12" width="7" height="7" rx="1" />
+                        <rect x="8" y="5" width="8" height="6" rx="1" />
+                        <path d="M6 15h2M17 15h2" />
                     </svg>
                 </span>
-                <span class="sb-nav__text">Agences</span>
+                <span class="sb-nav__text">Grossistes</span>
             </a>
 
             <a href="<?= $_sb_prefix ?>pages/depots.php" class="sb-nav__item <?= sb_active('depots.php') ?>"
@@ -166,6 +155,17 @@ $_sb_prefix = ($_sb_dir === 'pages') ? '../' : '';
                 </span>
                 <span class="sb-nav__text">Dépôts</span>
             </a>
+
+            <a href="<?= $_sb_prefix ?>pages/agences.php" class="sb-nav__item <?= sb_active('agences.php') ?>"
+                data-tooltip="Agences">
+                <span class="sb-nav__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                    </svg>
+                </span>
+                <span class="sb-nav__text">Agences</span>
+            </a>            
 
             <a href="<?= $_sb_prefix ?>pages/laboratoires.php" class="sb-nav__item <?= sb_active('laboratoires.php') ?>"
                 data-tooltip="Laboratoires">
@@ -196,11 +196,11 @@ $_sb_prefix = ($_sb_dir === 'pages') ? '../' : '';
                         <path d="M9 12h6M12 9v6" />
                     </svg>
                 </span>
-                <span class="sb-nav__text">FOSA</span>
+                <span class="sb-nav__text">Formations sanitaires</span>
             </a>
 
-            <a href="<?= $_sb_prefix ?>pages/deleguee.php" class="sb-nav__item <?= sb_active('deleguee.php') ?>"
-                data-tooltip="Délégués médicaux">
+            <a href="<?= $_sb_prefix ?>pages/professionnels.php" class="sb-nav__item <?= sb_active('professionnels.php') ?>"
+                data-tooltip="Professionnels">
                 <span class="sb-nav__icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
                         <circle cx="12" cy="8" r="4" />
@@ -208,45 +208,9 @@ $_sb_prefix = ($_sb_dir === 'pages') ? '../' : '';
                         <path d="M15 11l3 3 4-4" />
                     </svg>
                 </span>
-                <span class="sb-nav__text">Délégués</span>
+                <span class="sb-nav__text">Professionnels</span>
             </a>
-
-            <a href="<?= $_sb_prefix ?>pages/pharmaciens.php" class="sb-nav__item <?= sb_active('pharmaciens.php') ?>"
-                data-tooltip="Pharmaciens">
-                <span class="sb-nav__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <circle cx="12" cy="8" r="4" />
-                        <path d="M5 20c0-3.866 3.134-7 7-7s7 3.134 7 7" />
-                        <path d="M9 12h6M12 9v6" />
-                    </svg>
-                </span>
-                <span class="sb-nav__text">Pharmaciens</span>
-            </a>
-
-            <a href="<?= $_sb_prefix ?>pages/depotaires.php" class="sb-nav__item <?= sb_active('depotaires.php') ?>"
-                data-tooltip="Dépôtaires">
-                <span class="sb-nav__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <circle cx="12" cy="7" r="4" />
-                        <path d="M6 21v-5a6 6 0 0 1 12 0v5" />
-                        <rect x="10" y="13" width="4" height="3" rx="0.5" />
-                    </svg>
-                </span>
-                <span class="sb-nav__text">Dépôtaires</span>
-            </a>
-
-            <a href="<?= $_sb_prefix ?>pages/rapports.php" class="sb-nav__item <?= sb_active('rapports.php') ?>"
-                data-tooltip="Rapports">
-                <span class="sb-nav__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                        <line x1="18" y1="20" x2="18" y2="10" />
-                        <line x1="12" y1="20" x2="12" y2="4" />
-                        <line x1="6" y1="20" x2="6" y2="14" />
-                    </svg>
-                </span>
-                <span class="sb-nav__text">Rapports</span>
-            </a>
-
+            
         </div>
 
         <!-- ADMINISTRATION (figée) -->

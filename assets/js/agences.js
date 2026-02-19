@@ -5,7 +5,7 @@
 let filtered       = [...ALL_DATA];
 let currentPage    = 1;
 let perPage        = 15;
-let sortKey        = 'depot_pharmaceutique';
+let sortKey        = 'nom_agence';
 let sortDir        = 1;
 let activeDrawerId  = null;
 let pendingDeleteId = null;
@@ -39,8 +39,8 @@ function sortBy(key) {
         th.classList.remove('sort-asc', 'sort-desc');
     });
     const thMap = {
-        'depot_pharmaceutique': 'th_nom',
-        'proprietaire':         'th_prop',
+        'nom_agence': 'th_nom',
+        'responsable':         'th_prop',
         'numero_decision':      'th_dec',
         'box_rangement':        'th_box',
         'is_active':            'th_stat',
@@ -63,12 +63,13 @@ function applyFilters() {
     filtered = ALL_DATA.filter(d => {
         if (search) {
             const hay = [
-                d.depot_pharmaceutique,
-                d.proprietaire,
+                d.nom_agence,
+                d.responsable,
                 d.prenom,
                 d.nom,
                 d.adresse,
                 d.localite,
+                d.quartier,
                 d.telephone,
                 d.email,
                 d.numero_decision,
@@ -166,11 +167,11 @@ function renderTable() {
 
         return `<tr onclick="openDrawer(${d.id})">
             <td>
-                <div class="td-name">${v(d.depot_pharmaceutique)}</div>
+                <div class="td-name">${v(d.nom_agence)}</div>
                 <div class="td-sub">${v(d.localite)}</div>
             </td>
             <td>
-                <div>${v(d.proprietaire)}</div>
+                <div>${v(d.responsable)}</div>
                 <div class="td-sub">${v(d.telephone)}</div>
             </td>
             <td>
@@ -183,7 +184,7 @@ function renderTable() {
             <td>
                 <div class="td-actions" onclick="event.stopPropagation()">
                     <button class="action-btn" title="Modifier"
-                        onclick="location.href='edit-depot.php?id=${d.id}'">
+                        onclick="location.href='edit-agence.php?id=${d.id}'">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
                     <button class="action-btn action-btn--danger" title="Supprimer"
@@ -236,10 +237,10 @@ function openDrawer(id) {
     if (!d) return;
     activeDrawerId = id;
 
-    document.getElementById('drawerAvatar').textContent = initials(d.depot_pharmaceutique);
-    document.getElementById('drawerTitle').textContent  = d.depot_pharmaceutique;
-    document.getElementById('drawerSub').textContent    = d.proprietaire;
-    document.getElementById('btnDrawerEdit').href       = `edit-depot.php?id=${d.id}`;
+    document.getElementById('drawerAvatar').textContent = initials(d.nom_agence);
+    document.getElementById('drawerTitle').textContent  = d.nom_agence;
+    document.getElementById('drawerSub').textContent    = d.responsable;
+    document.getElementById('btnDrawerEdit').href       = `edit-agence.php?id=${d.id}`;
 
     const loc = locLabel(d);
 
@@ -328,7 +329,7 @@ document.getElementById('drawerBackdrop').addEventListener('click', function (e)
     if (e.target === this) closeDrawer();
 });
 
-document.getElementById('btnDrawerDelete').addEventListener('click', () => {
+document.getElementById('btnDrawerDel').addEventListener('click', () => {
     const id = activeDrawerId;
     if (!id) return;
     closeDrawer();
@@ -340,7 +341,7 @@ function openDelModal(id) {
     const d = ALL_DATA.find(x => x.id === id);
     if (!d) return;
     pendingDeleteId = Number(id);
-    document.getElementById('delMsg').textContent = `« ${d.depot_pharmaceutique} » sera définitivement supprimé.`;
+    document.getElementById('delMsg').textContent = `« ${d.nom_agence} » sera définitivement supprimé.`;
     document.getElementById('delOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
 }

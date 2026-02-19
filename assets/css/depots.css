@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   pharmacies.css — DPM Archive
+   depots.css — DPM Archive
    Font: DM Sans (loaded from page)
 ═══════════════════════════════════════════════════════════ */
 *,
@@ -144,6 +144,7 @@ body {
     transform 0.1s;
   white-space: nowrap;
   flex-shrink: 0;
+  text-decoration: none;
 }
 .btn-add svg {
   width: 14px;
@@ -436,79 +437,7 @@ tbody td {
   margin-top: 2px;
 }
 
-/* ── Garde indicator ─────────────────────────────────── */
-.garde-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-  position: relative;
-  margin-left: 4px;
-}
-.garde-dot::after {
-  content: "";
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 2px solid var(--green);
-  opacity: 0;
-  animation: garde-pulse 2s ease-out infinite;
-}
-@keyframes garde-pulse {
-  0% {
-    opacity: 0.6;
-    transform: scale(0.6);
-  }
-  70% {
-    opacity: 0;
-    transform: scale(1.8);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.8);
-  }
-}
-
-.garde-dates-inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 7px;
-  background: var(--green-light);
-  color: var(--green-mid);
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  white-space: nowrap;
-  margin-left: 6px;
-}
-
-.garde-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  background: var(--green-light);
-  color: var(--green-mid);
-  white-space: nowrap;
-}
-.garde-pill::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  display: inline-block;
-  flex-shrink: 0;
-  animation: garde-pulse 2s ease-out infinite;
-}
-
-/* Badges */
+/* ── Badges ──────────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -519,22 +448,6 @@ tbody td {
   font-weight: 600;
   white-space: nowrap;
 }
-.badge svg {
-  width: 10px;
-  height: 10px;
-}
-.badge--jour {
-  background: #fffbeb;
-  color: #92600a;
-}
-.badge--nuit {
-  background: #f5f3ff;
-  color: #5b21b6;
-}
-.badge--h24 {
-  background: var(--green-light);
-  color: var(--green-mid);
-}
 .badge--actif {
   background: var(--green-light);
   color: var(--green-mid);
@@ -544,7 +457,7 @@ tbody td {
   color: var(--ink-soft);
 }
 
-/* Actions dans les lignes */
+/* ── Actions dans les lignes ─────────────────────────────── */
 .td-actions {
   display: flex;
   align-items: center;
@@ -816,26 +729,6 @@ tbody tr:hover .td-actions {
   color: var(--ink-soft);
   font-weight: 400;
   font-style: italic;
-}
-
-/* ── Dates dans le drawer ────────────────────────────── */
-.garde-dates-drawer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 4px;
-}
-.garde-date-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 8px;
-  background: var(--green-light);
-  color: var(--green-mid);
-  border-radius: 5px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 .drawer-footer {
